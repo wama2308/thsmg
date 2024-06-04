@@ -1,0 +1,37 @@
+{
+  "sections": {
+    "product-services": {
+      "type": "product-services",
+      "blocks": {
+        "service_egFLpp": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-20-horas-de-desarrollo"
+          }
+        },
+        "service_JynmWQ": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-40-horas-de-desarrollo"
+          }
+        },
+        "service_AaAtKE": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-60-horas-de-desarrollo"
+          }
+        }
+      },
+      "block_order": [
+        "service_egFLpp",
+        "service_JynmWQ",
+        "service_AaAtKE"
+      ],
+      "settings": {
+      }
+    }
+  },
+  "order": [
+    "product-services"
+  ]
+}

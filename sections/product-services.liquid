@@ -1,0 +1,94 @@
+<section id="product-services">
+  <div class="container">
+    {% for block in section.blocks %}
+      {% if block.type == 'service' %}
+        {% assign product = all_products[block.settings.product] %}
+        <div class="service">
+          <h2>{{ product.title }}</h2>
+          <div>{{ product.description }}</div>
+          <button class="add-to-cart" data-product-id="{{ product.id }}">Agregar al carrito</button>
+        </div>
+      {% elsif block.type == 'reviews' %}
+        <div class="reviews">
+          <h2>Reseñas</h2>
+          <!-- Aquí añadir el código para mostrar reseñas -->
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.add-to-cart').forEach((button) => {
+    button.addEventListener('click', function () {
+      const productId = this.getAttribute('data-product-id');
+      fetch('/cart.js')
+        .then((response) => response.json())
+        .then((cart) => {
+          const existingService = cart.items.find((item) => item.product_type === 'Service');
+          if (existingService) {
+            fetch(`/cart/change.js`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                quantity: 0,
+                id: existingService.id,
+              }),
+            }).then(() => {
+              addToCart(productId);
+            });
+          } else {
+            addToCart(productId);
+          }
+        });
+
+      function addToCart(productId) {
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: productId,
+            quantity: 1,
+          }),
+        }).then(() => {
+          alert('Producto agregado al carrito');
+        });
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Servicios",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "service",
+      "name": "Service",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Producto"
+        }
+      ]
+    },
+    {
+      "type": "reviews",
+      "name": "Reviews",
+      "settings": []
+    }
+  ],
+  "presets": [
+    {
+      "name": "Servicios",
+      "category": "Páginas"
+    }
+  ]
+}
+{% endschema %}
