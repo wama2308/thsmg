@@ -34,10 +34,10 @@ if (!customElements.get('product-form')) {
         const formData = new FormData(this.form);
         const variantId = formData.get('id');
         const serviceId = formData.get('service_id');
-        const giftId = '47362534572265'; // Fixed gift product ID
+        const giftId = '47362534572265'; // ID de producto de regalo fijo
 
         try {
-          // Fetch current cart content
+          // Obtener el contenido actual del carrito
           const cartResponse = await fetch('/cart.js', {
             method: 'GET',
             headers: {
@@ -46,7 +46,7 @@ if (!customElements.get('product-form')) {
           });
           const cartData = await cartResponse.json();
 
-          // Remove all existing items except the service and gift
+          // Eliminar todos los artículos existentes excepto el servicio y el regalo.
           const removePromises = cartData.items.map((item) => {
             if (item.variant_id != serviceId && item.variant_id != giftId) {
               return fetch('/cart/change.js', {
@@ -65,7 +65,7 @@ if (!customElements.get('product-form')) {
 
           await Promise.all(removePromises.filter(Boolean));
 
-          // Add the service if not already in the cart
+          // Agrega el servicio si aún no está en el carrito
           const serviceInCart = cartData.items.some((item) => item.variant_id == serviceId);
           if (!serviceInCart) {
             await fetch('/cart/add.js', {
@@ -81,7 +81,7 @@ if (!customElements.get('product-form')) {
             });
           }
 
-          // Add the gift product if not already in the cart
+          // Agrega el producto de regalo si aún no está en el carrito.
           const giftInCart = cartData.items.some((item) => item.variant_id == giftId);
           if (!giftInCart) {
             await fetch('/cart/add.js', {

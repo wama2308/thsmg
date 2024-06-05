@@ -1,15 +1,21 @@
 {
   "reviews": [
     {
-      "customerImage": "https://example.com/image1.jpg",
+      "customerImage": "/assets/review-1.webp",
       "customerName": "John Doe",
       "rating": 5,
       "comment": "Great product!"
     },
     {
-      "customerImage": "https://example.com/image2.jpg",
+      "customerImage": "/assets/review-2.webp",
       "customerName": "Jane Smith",
       "rating": 4,
+      "comment": "Very satisfied with the purchase."
+    },
+    {
+      "customerImage": "/assets/review-3.webp",
+      "customerName": "Ana Taylor",
+      "rating": 3,
       "comment": "Very satisfied with the purchase."
     }
   ]

@@ -1,31 +1,58 @@
-<section id="product-services">
-  <div class="container">
+<section id="product-services" class="container-services">
+  <h2>Servicios</h2>
+  <div class="content-service">
     {% for block in section.blocks %}
-      {% if block.type == 'service' %}
-        {% assign product = all_products[block.settings.product] %}
-        <div class="service">
+      {% assign product = all_products[block.settings.product] %}
+      <div class="service">
+        <div>
           <h2>{{ product.title }}</h2>
           <div>{{ product.description }}</div>
-          {%- render 'buy-buttons',
-            block: block,
-            product: product,
-            product_form_id: product.id,
-            section_id: section.id,
-            show_pickup_availability: true
-          -%}
         </div>
-      {% elsif block.type == 'reviews' %}
-        <div class="reviews">
-          <h2>Reseñas</h2>
-          <!-- Aquí añadir el código para mostrar reseñas -->
-        </div>
-      {% endif %}
+        {%- render 'buy-buttons',
+          block: block,
+          product: product,
+          product_form_id: product.id,
+          section_id: section.id,
+          show_pickup_availability: true
+        -%}
+      </div>
     {% endfor %}
   </div>
 </section>
 
 <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  .container-services {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 100px);
+    margin: 0 auto 25px;
+
+    @media (max-width: 1024px) {
+      width: calc(100% - 40px);
+    }
+  }
+  .content-service {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+  }
+
+  .service {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #d9d5d5;
+    border-radius: 20px;
+    padding: 16px;
+  }
+</style>
 
 {% schema %}
 {
