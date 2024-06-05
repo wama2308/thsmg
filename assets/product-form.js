@@ -74,6 +74,29 @@ if (!customElements.get('product-form')) {
           const response = await fetch(`${routes.cart_add_url}`, config);
           const responseData = await response.json();
 
+          // Si la adición del producto normal fue exitosa, ahora agregamos el producto adicional
+          if (!responseData.status && !this.error) {
+            try {
+              const additionalProductResponse = await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                  id: '47362534572265',
+                  quantity: 1, // Puedes ajustar la cantidad según sea necesario
+                }),
+              });
+              const additionalProductData = await additionalProductResponse.json();
+
+              // Aquí puedes manejar la respuesta si es necesario
+              console.log('Producto adicional agregado:', additionalProductData);
+            } catch (error) {
+              console.error('Error al agregar el producto adicional:', error);
+            }
+          }
+
           if (responseData.status) {
             publish(PUB_SUB_EVENTS.cartError, {
               source: 'product-form',
