@@ -1,0 +1,38 @@
+<div id="reviews-container"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch('{{ "reviews.json" | asset_url }}')
+      .then((response) => response.json())
+      .then((data) => {
+        const reviewsContainer = document.getElementById('reviews-container');
+
+        data.reviews.forEach((review) => {
+          const reviewHTML = `
+            <div class="review">
+              <img src="${review.customerImage}" alt="${review.customerName}'s photo">
+              <h3>${review.customerName}</h3>
+              <p>Rating: ${review.rating} stars</p>
+              <p>${review.comment}</p>
+            </div>
+          `;
+
+          reviewsContainer.insertAdjacentHTML('beforeend', reviewHTML);
+        });
+      })
+      .catch((error) => console.error('Error loading reviews:', error));
+  });
+</script>
+
+<style>
+  .review {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  .review img {
+    max-width: 100px;
+    border-radius: 50%;
+  }
+</style>

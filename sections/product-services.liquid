@@ -6,7 +6,13 @@
         <div class="service">
           <h2>{{ product.title }}</h2>
           <div>{{ product.description }}</div>
-          <button class="add-to-cart" data-product-id="{{ product.id }}">Agregar al carrito</button>
+          {%- render 'buy-buttons',
+            block: block,
+            product: product,
+            product_form_id: product.id,
+            section_id: section.id,
+            show_pickup_availability: true
+          -%}
         </div>
       {% elsif block.type == 'reviews' %}
         <div class="reviews">
@@ -61,6 +67,8 @@
     });
   });
 </script>
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 
 {% schema %}
 {

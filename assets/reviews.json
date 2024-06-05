@@ -1,0 +1,16 @@
+{
+  "reviews": [
+    {
+      "customerImage": "https://example.com/image1.jpg",
+      "customerName": "John Doe",
+      "rating": 5,
+      "comment": "Great product!"
+    },
+    {
+      "customerImage": "https://example.com/image2.jpg",
+      "customerName": "Jane Smith",
+      "rating": 4,
+      "comment": "Very satisfied with the purchase."
+    }
+  ]
+}

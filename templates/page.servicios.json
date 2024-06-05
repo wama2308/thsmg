@@ -22,16 +22,13 @@
           }
         }
       },
-      "block_order": [
-        "service_egFLpp",
-        "service_JynmWQ",
-        "service_AaAtKE"
-      ],
-      "settings": {
-      }
+      "block_order": ["service_egFLpp", "service_JynmWQ", "service_AaAtKE"],
+      "settings": {}
+    },
+    "reviews": {
+      "type": "reviews",
+      "settings": {}
     }
   },
-  "order": [
-    "product-services"
-  ]
+  "order": ["product-services", "reviews"]
 }

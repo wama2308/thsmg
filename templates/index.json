@@ -79,6 +79,7 @@
     },
     "featured_collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "Featured services",
         "heading_size": "h2",
@@ -158,12 +159,43 @@
         "padding_top": 36,
         "padding_bottom": 36
       }
+    },
+    "product-services": {
+      "type": "product-services",
+      "blocks": {
+        "service_egFLpp": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-20-horas-de-desarrollo"
+          }
+        },
+        "service_JynmWQ": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-40-horas-de-desarrollo"
+          }
+        },
+        "service_AaAtKE": {
+          "type": "service",
+          "settings": {
+            "product": "paquete-de-60-horas-de-desarrollo"
+          }
+        }
+      },
+      "block_order": ["service_egFLpp", "service_JynmWQ", "service_AaAtKE"],
+      "settings": {}
+    },
+    "reviews": {
+      "type": "reviews",
+      "settings": {}
     }
   },
   "order": [
     "image_banner",
     "rich_text",
     "featured_collection",
-    "multicolumn"
+    "multicolumn",
+    "product-services",
+    "reviews"
   ]
 }
