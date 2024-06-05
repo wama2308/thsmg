@@ -33,6 +33,8 @@ if (!customElements.get('product-form')) {
 
         const formData = new FormData(this.form);
         const variantId = formData.get('id');
+        const serviceId = formData.get('service_id');
+        const giftId = '47362534572265'; // Fixed gift product ID
 
         try {
           // Fetch current cart content
@@ -44,22 +46,56 @@ if (!customElements.get('product-form')) {
           });
           const cartData = await cartResponse.json();
 
-          // Remove all existing items
+          // Remove all existing items except the service and gift
           const removePromises = cartData.items.map((item) => {
-            return fetch('/cart/change.js', {
+            if (item.variant_id != serviceId && item.variant_id != giftId) {
+              return fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: JSON.stringify({
+                  id: item.key,
+                  quantity: 0,
+                }),
+              });
+            }
+          });
+
+          await Promise.all(removePromises.filter(Boolean));
+
+          // Add the service if not already in the cart
+          const serviceInCart = cartData.items.some((item) => item.variant_id == serviceId);
+          if (!serviceInCart) {
+            await fetch('/cart/add.js', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
               },
               body: JSON.stringify({
-                id: item.key,
-                quantity: 0,
+                id: serviceId,
+                quantity: 1,
               }),
             });
-          });
+          }
 
-          await Promise.all(removePromises);
+          // Add the gift product if not already in the cart
+          const giftInCart = cartData.items.some((item) => item.variant_id == giftId);
+          if (!giftInCart) {
+            await fetch('/cart/add.js', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+              },
+              body: JSON.stringify({
+                id: giftId,
+                quantity: 1,
+              }),
+            });
+          }
 
           if (this.cart) {
             formData.append(
@@ -73,29 +109,6 @@ if (!customElements.get('product-form')) {
 
           const response = await fetch(`${routes.cart_add_url}`, config);
           const responseData = await response.json();
-
-          // Si la adición del producto normal fue exitosa, ahora agregamos el producto adicional
-          if (!responseData.status && !this.error) {
-            try {
-              const additionalProductResponse = await fetch('/cart/add.js', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({
-                  id: '47362534572265',
-                  quantity: 1, // Puedes ajustar la cantidad según sea necesario
-                }),
-              });
-              const additionalProductData = await additionalProductResponse.json();
-
-              // Aquí puedes manejar la respuesta si es necesario
-              console.log('Producto adicional agregado:', additionalProductData);
-            } catch (error) {
-              console.error('Error al agregar el producto adicional:', error);
-            }
-          }
 
           if (responseData.status) {
             publish(PUB_SUB_EVENTS.cartError, {

@@ -12,24 +12,19 @@
       "blocks": {
         "subtotal": {
           "type": "subtotal",
-          "settings": {
-          }
+          "settings": {}
         },
         "buttons": {
           "type": "buttons",
-          "settings": {
-          }
+          "settings": {}
         }
       },
-      "block_order": [
-        "subtotal",
-        "buttons"
-      ],
-      "settings": {
-      }
+      "block_order": ["subtotal", "buttons"],
+      "settings": {}
     },
     "featured-collection": {
       "type": "featured-collection",
+      "disabled": true,
       "settings": {
         "title": "Featured collection",
         "heading_size": "h2",
@@ -49,9 +44,5 @@
       }
     }
   },
-  "order": [
-    "cart-items",
-    "cart-footer",
-    "featured-collection"
-  ]
+  "order": ["cart-items", "cart-footer", "featured-collection"]
 }
