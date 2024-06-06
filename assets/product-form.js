@@ -17,7 +17,7 @@ if (!customElements.get('product-form')) {
         this.hideErrors = this.dataset.hideErrors === 'true';
       }
 
-      async onSubmitHandler(evt) {
+      onSubmitHandler(evt) {
         evt.preventDefault();
         if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
@@ -32,135 +32,72 @@ if (!customElements.get('product-form')) {
         delete config.headers['Content-Type'];
 
         const formData = new FormData(this.form);
-        const variantId = formData.get('id');
-        const serviceId = formData.get('service_id');
-        const giftId = '47362534572265'; // ID de producto de regalo fijo
-
-        try {
-          // Obtener el contenido actual del carrito
-          const cartResponse = await fetch('/cart.js', {
-            method: 'GET',
-            headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-            },
-          });
-          const cartData = await cartResponse.json();
-
-          // Eliminar todos los artículos existentes excepto el servicio y el regalo.
-          const removePromises = cartData.items.map((item) => {
-            if (item.variant_id != serviceId && item.variant_id != giftId) {
-              return fetch('/cart/change.js', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: JSON.stringify({
-                  id: item.key,
-                  quantity: 0,
-                }),
-              });
-            }
-          });
-
-          await Promise.all(removePromises.filter(Boolean));
-
-          // Agrega el servicio si aún no está en el carrito
-          const serviceInCart = cartData.items.some((item) => item.variant_id == serviceId);
-          if (!serviceInCart) {
-            await fetch('/cart/add.js', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-              },
-              body: JSON.stringify({
-                id: serviceId,
-                quantity: 1,
-              }),
-            });
-          }
-
-          // Agrega el producto de regalo si aún no está en el carrito.
-          const giftInCart = cartData.items.some((item) => item.variant_id == giftId);
-          if (!giftInCart) {
-            await fetch('/cart/add.js', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-              },
-              body: JSON.stringify({
-                id: giftId,
-                quantity: 1,
-              }),
-            });
-          }
-
-          if (this.cart) {
-            formData.append(
-              'sections',
-              this.cart.getSectionsToRender().map((section) => section.id)
-            );
-            formData.append('sections_url', window.location.pathname);
-            this.cart.setActiveElement(document.activeElement);
-          }
-          config.body = formData;
-
-          const response = await fetch(`${routes.cart_add_url}`, config);
-          const responseData = await response.json();
-
-          if (responseData.status) {
-            publish(PUB_SUB_EVENTS.cartError, {
-              source: 'product-form',
-              productVariantId: variantId,
-              errors: responseData.errors || responseData.description,
-              message: responseData.message,
-            });
-            this.handleErrorMessage(responseData.description);
-
-            const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
-            if (!soldOutMessage) return;
-            this.submitButton.setAttribute('aria-disabled', true);
-            this.submitButtonText.classList.add('hidden');
-            soldOutMessage.classList.remove('hidden');
-            this.error = true;
-            return;
-          } else if (!this.cart) {
-            window.location = window.routes.cart_url;
-            return;
-          }
-
-          if (!this.error)
-            publish(PUB_SUB_EVENTS.cartUpdate, {
-              source: 'product-form',
-              productVariantId: variantId,
-              cartData: responseData,
-            });
-          this.error = false;
-          const quickAddModal = this.closest('quick-add-modal');
-          if (quickAddModal) {
-            document.body.addEventListener(
-              'modalClosed',
-              () => {
-                setTimeout(() => {
-                  this.cart.renderContents(responseData);
-                });
-              },
-              { once: true }
-            );
-            quickAddModal.hide(true);
-          } else {
-            this.cart.renderContents(responseData);
-          }
-        } catch (e) {
-          console.error(e);
-        } finally {
-          this.submitButton.classList.remove('loading');
-          if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-          if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-          this.querySelector('.loading__spinner').classList.add('hidden');
+        if (this.cart) {
+          formData.append(
+            'sections',
+            this.cart.getSectionsToRender().map((section) => section.id)
+          );
+          formData.append('sections_url', window.location.pathname);
+          this.cart.setActiveElement(document.activeElement);
         }
+        config.body = formData;
+
+        fetch(`${routes.cart_add_url}`, config)
+          .then((response) => response.json())
+          .then((response) => {
+            if (response.status) {
+              publish(PUB_SUB_EVENTS.cartError, {
+                source: 'product-form',
+                productVariantId: formData.get('id'),
+                errors: response.errors || response.description,
+                message: response.message,
+              });
+              this.handleErrorMessage(response.description);
+
+              const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
+              if (!soldOutMessage) return;
+              this.submitButton.setAttribute('aria-disabled', true);
+              this.submitButtonText.classList.add('hidden');
+              soldOutMessage.classList.remove('hidden');
+              this.error = true;
+              return;
+            } else if (!this.cart) {
+              window.location = window.routes.cart_url;
+              return;
+            }
+
+            if (!this.error)
+              publish(PUB_SUB_EVENTS.cartUpdate, {
+                source: 'product-form',
+                productVariantId: formData.get('id'),
+                cartData: response,
+              });
+            this.error = false;
+            const quickAddModal = this.closest('quick-add-modal');
+            if (quickAddModal) {
+              document.body.addEventListener(
+                'modalClosed',
+                () => {
+                  setTimeout(() => {
+                    this.cart.renderContents(response);
+                  });
+                },
+                { once: true }
+              );
+              quickAddModal.hide(true);
+            } else {
+              this.cart.renderContents(response);
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          })
+          .finally(() => {
+            this.submitButton.classList.remove('loading');
+            if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+            if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+            this.querySelector('.loading__spinner').classList.add('hidden');
+          });
       }
 
       handleErrorMessage(errorMessage = false) {
