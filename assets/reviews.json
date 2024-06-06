@@ -1,19 +1,19 @@
 {
   "reviews": [
     {
-      "customerImage": "/assets/review-1.webp",
+      "customerImage": "https://cdn.shopify.com/s/files/1/0697/5084/9769/files/review-1.webp?v=1717624215",
       "customerName": "John Doe",
       "rating": 5,
       "comment": "Great product!"
     },
     {
-      "customerImage": "/assets/review-2.webp",
+      "customerImage": "https://cdn.shopify.com/s/files/1/0697/5084/9769/files/review-2.webp?v=1717624215",
       "customerName": "Jane Smith",
       "rating": 4,
       "comment": "Very satisfied with the purchase."
     },
     {
-      "customerImage": "/assets/review-3.webp",
+      "customerImage": "https://cdn.shopify.com/s/files/1/0697/5084/9769/files/review-3.webp?v=1717624215",
       "customerName": "Ana Taylor",
       "rating": 3,
       "comment": "Very satisfied with the purchase."
